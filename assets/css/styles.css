@@ -1,0 +1,516 @@
+/* =============================================================================
+   Web de cumpleaños de Yuri  ·  Hoja de estilos única
+   -----------------------------------------------------------------------------
+   Índice
+     00. Variables y reset
+     01. Utilidades y animaciones de entrada
+     02. Navegación
+     03. Homenaje principal (hero)
+     04. Cabeceras de sección
+     05. Nuestras Raíces · árbol genealógico animado
+     06. Mural de Recuerdos
+     07. Pie de página y visor de fotos
+     08. Responsive
+     09. Accesibilidad e impresión
+   ========================================================================== */
+
+
+/* ── 00. VARIABLES Y RESET ────────────────────────────────────────────────── */
+:root {
+  /* Paleta */
+  --beige:        #F5F1E9;
+  --beige-hondo:  #EDE6D6;
+  --crema:        #FFFDF8;
+  --marino:       #1A2B3C;
+  --marino-suave: #3D5065;
+  --marino-hondo: #16283C;
+  --oro:          #D4AF37;
+  --oro-claro:    #E7CE7C;
+  --verde:        #7FA36B;
+
+  /* Tipografía */
+  --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  --sans:  "Lato", "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Medidas */
+  --ancho-max: 1180px;
+  --sombra-suave: 0 6px 22px rgba(26, 43, 60, .10);
+  --sombra-media: 0 14px 40px rgba(26, 43, 60, .16);
+  --sombra-alta:  0 26px 60px rgba(26, 43, 60, .26);
+  --alto-nav: 58px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: var(--alto-nav); }
+
+body {
+  margin: 0;
+  background: var(--beige);
+  color: var(--marino);
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+p  { margin: 0; }
+h1, h2, h3 { margin: 0; font-family: var(--serif); font-weight: 600; line-height: 1.15; }
+a  { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; cursor: pointer; }
+
+.contenedor {
+  width: min(100% - 3rem, var(--ancho-max));
+  margin-inline: auto;
+}
+
+.salta-al-contenido {
+  position: absolute; left: -9999px; top: 0; z-index: 200;
+  background: var(--marino); color: var(--beige); padding: .7rem 1.2rem;
+}
+.salta-al-contenido:focus { left: 0; }
+
+
+/* ── 01. UTILIDADES Y ANIMACIONES DE ENTRADA ──────────────────────────────── */
+/* La clase .js la pone el script del <head>: sin JavaScript todo se ve igual. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity .8s cubic-bezier(.22, .61, .36, 1),
+              transform .8s cubic-bezier(.22, .61, .36, 1);
+}
+.js .reveal.is-visible { opacity: 1; transform: none; }
+
+/* Escalonado de los hijos revelados dentro de una misma cuadrícula */
+.js .collage  .reveal { transition-delay: calc(var(--r, 0) * 55ms); }
+
+.es-marcador { filter: saturate(.9); }
+
+
+/* ── 02. NAVEGACIÓN ───────────────────────────────────────────────────────── */
+.nav {
+  position: sticky; top: 0; z-index: 60;
+  background: rgba(245, 241, 233, .88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(26, 43, 60, .10);
+}
+.nav__inner {
+  width: min(100% - 2rem, var(--ancho-max));
+  margin-inline: auto;
+  height: var(--alto-nav);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav__list {
+  display: flex; align-items: center; flex-wrap: wrap;
+  justify-content: center; gap: 0;
+}
+.nav__list li + li::before {
+  content: "|";
+  color: rgba(26, 43, 60, .28);
+  margin: 0 .1rem;
+}
+.nav__link {
+  display: inline-block;
+  padding: .35rem .85rem;
+  font-size: .82rem;
+  letter-spacing: .06em;
+  color: var(--marino-suave);
+  transition: color .25s ease;
+}
+.nav__link:hover,
+.nav__link:focus-visible { color: var(--oro); }
+.nav__link.is-active { color: var(--marino); font-weight: 700; }
+
+.nav__progreso {
+  position: absolute; left: 0; bottom: -1px; height: 2px; width: 0%;
+  background: linear-gradient(90deg, var(--oro-claro), var(--oro));
+}
+
+
+/* ── 03. HOMENAJE PRINCIPAL (HERO) ────────────────────────────────────────── */
+.hero {
+  position: relative;
+  padding: clamp(3rem, 7vw, 6rem) 0 clamp(3.5rem, 8vw, 6.5rem);
+  text-align: center;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(212, 175, 55, .13), transparent 70%),
+    var(--beige);
+}
+.hero__kicker {
+  font-size: .74rem; letter-spacing: .32em; text-transform: uppercase;
+  color: var(--oro); font-weight: 700; margin-bottom: 1.1rem;
+}
+.hero__titulo {
+  font-size: clamp(2.3rem, 6.2vw, 4.4rem);
+  letter-spacing: -.015em;
+  margin-bottom: .55rem;
+}
+.hero__sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--marino-suave);
+  font-weight: 300;
+}
+.hero__sub strong { font-weight: 700; color: var(--marino); }
+
+.hero__adorno {
+  display: flex; align-items: center; justify-content: center; gap: .9rem;
+  color: var(--oro); margin: 1.6rem 0 2.4rem; font-size: .8rem;
+}
+.hero__adorno span {
+  display: block; width: clamp(40px, 12vw, 110px); height: 1px;
+  background: linear-gradient(90deg, transparent, var(--oro));
+}
+.hero__adorno span:last-child { background: linear-gradient(90deg, var(--oro), transparent); }
+
+.hero__foto {
+  margin: 0 auto;
+  max-width: 940px;
+  padding: 10px;                        /* el "passe-partout" claro del marco */
+  background: var(--crema);
+  border: 1px solid rgba(212, 175, 55, .55);
+  box-shadow: var(--sombra-media);
+}
+.hero__foto img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.hero__nota {
+  max-width: 620px; margin: 2.3rem auto 0;
+  color: var(--marino-suave); font-weight: 300;
+  font-size: 1.02rem;
+}
+
+
+/* ── 04. CABECERAS DE SECCIÓN ─────────────────────────────────────────────── */
+.seccion__cabecera { text-align: center; margin-bottom: clamp(2rem, 4vw, 3.2rem); }
+.seccion__titulo {
+  font-size: clamp(1.7rem, 4vw, 2.7rem);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.seccion__titulo::after {
+  content: ""; display: block;
+  width: 68px; height: 2px; margin: 1rem auto 0;
+  background: var(--oro);
+}
+.seccion__sub {
+  margin-top: .9rem;
+  color: var(--marino-suave);
+  font-weight: 300; font-size: .98rem;
+}
+.seccion__cabecera--claro .seccion__titulo { color: var(--beige); }
+.seccion__cabecera--claro .seccion__sub    { color: rgba(245, 241, 233, .68); }
+
+
+/* ── 05. NUESTRAS RAÍCES · ÁRBOL GENEALÓGICO ANIMADO ──────────────────────── */
+.raices { padding: clamp(3.5rem, 8vw, 6rem) 0; }
+
+.arbol-envoltorio { position: relative; }
+
+/* Aviso de desplazamiento: solo se muestra cuando el árbol no cabe (ver 08) */
+.arbol__pista {
+  display: none;
+  text-align: center;
+  font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--oro); font-weight: 700;
+  margin-bottom: .8rem;
+}
+
+.arbol {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin-inline: auto;
+  aspect-ratio: 1200 / 1000;   /* mismo ratio que el viewBox del SVG */
+  container-type: inline-size; /* permite medir los retratos en cqw */
+}
+.arbol__svg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  overflow: visible;
+}
+
+/* --- Dibujado progresivo de las ramas (los vínculos familiares) --- */
+.arbol .trazo {
+  stroke-dasharray: var(--largo);
+  stroke-dashoffset: var(--largo);
+}
+.arbol.is-visible .trazo {
+  animation: dibujar .85s cubic-bezier(.5, .05, .35, 1) var(--d, 0s) forwards;
+}
+@keyframes dibujar { to { stroke-dashoffset: 0; } }
+
+/* --- Los nudos dorados de cada matrimonio --- */
+.arbol .nudo {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0) rotate(-90deg);
+  opacity: 0;
+}
+.arbol.is-visible .nudo {
+  animation: nacer .6s cubic-bezier(.34, 1.5, .64, 1) var(--d, 0s) forwards;
+}
+@keyframes nacer {
+  to { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* --- La copa difusa aparece con el follaje --- */
+.arbol__copa { opacity: 0; }
+.arbol.is-visible .arbol__copa { animation: aparecer 1.8s ease .2s forwards; }
+@keyframes aparecer { to { opacity: 1; } }
+
+/* --- Hojas: brotan escalonadas y luego se mecen con el viento --- */
+.arbol__hojas {
+  transform-box: view-box;
+  transform-origin: 600px 200px;
+}
+.arbol.is-visible .arbol__hojas { animation: mecer 8s ease-in-out 4s infinite; }
+@keyframes mecer {
+  0%, 100% { transform: rotate(-.6deg); }
+  50%      { transform: rotate(.6deg); }
+}
+.arbol .hoja {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  opacity: 0;
+}
+.arbol.is-visible .hoja {
+  animation: brotar .7s cubic-bezier(.34, 1.56, .64, 1) forwards;
+  animation-delay: calc(.7s + var(--h, 1) * .075s);
+}
+@keyframes brotar {
+  0%   { transform: scale(0);    opacity: 0; }
+  70%  { transform: scale(1.18); opacity: 1; }
+  100% { transform: scale(1);    opacity: .95; }
+}
+
+/* --- Retratos: el <li> mide exactamente el círculo, así que --x/--y marcan
+       su centro y coinciden con las coordenadas del SVG. El nombre cuelga
+       por debajo en posición absoluta y no descoloca nada. --- */
+.arbol__nodos { position: absolute; inset: 0; }
+
+.nodo {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%);
+  width: clamp(92px, 12vw, 148px);   /* alternativa para navegadores sin cqw */
+  width: 14.5cqw;
+}
+.js .nodo { opacity: 0; }
+.js .arbol.is-visible .nodo {
+  animation: colgar .8s cubic-bezier(.34, 1.4, .64, 1) var(--d, 0s) forwards;
+}
+@keyframes colgar {
+  0%   { opacity: 0; transform: translate(-50%, -62%) scale(.4); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.nodo__aro {
+  position: relative;
+  width: 100%; aspect-ratio: 1;
+  border-radius: 50%;
+  padding: 4px;
+  background: var(--crema);
+  border: 2px solid var(--oro);
+  box-shadow: var(--sombra-suave);
+  transition: transform .35s cubic-bezier(.22, .61, .36, 1),
+              box-shadow .35s ease, border-color .35s ease;
+}
+.nodo__aro img {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  /* Los retratos ya vienen recortados en cuadrado por retratos-arbol.sh.
+     Si algún día pones una foto sin recortar y la cara queda descentrada,
+     añade --pos al <li class="nodo">, p. ej.  --pos: 50% 25%;  */
+  object-position: var(--pos, 50% 50%);
+}
+.nodo:hover .nodo__aro,
+.nodo:focus-within .nodo__aro {
+  transform: scale(1.09);
+  border-color: var(--marino);
+  box-shadow: var(--sombra-media);
+}
+
+.nodo__pie {
+  position: absolute;
+  top: calc(100% + .5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 175%;
+  text-align: center;
+  /* Halo del color del fondo: las ramas pasan por detrás sin ensuciar el texto */
+  text-shadow:
+     0 0 6px var(--beige),  0 0 6px var(--beige),
+     0 0 10px var(--beige), 0 0 10px var(--beige);
+}
+.nodo__nombre {
+  font-family: var(--serif);
+  font-size: clamp(.72rem, 1.15vw, .88rem);
+  font-weight: 600; line-height: 1.25;
+}
+.nodo__rol {
+  font-size: clamp(.6rem, .95vw, .7rem);
+  letter-spacing: .09em; text-transform: uppercase;
+  color: var(--oro); font-weight: 700;
+  line-height: 1.35;
+}
+
+/* El homenajeado destaca: doble aro dorado y halo cálido */
+.nodo--homenaje .nodo__aro {
+  border-width: 3px;
+  box-shadow: 0 0 0 5px rgba(212, 175, 55, .22), var(--sombra-media);
+}
+.nodo--homenaje .nodo__nombre { font-size: clamp(.8rem, 1.35vw, 1rem); }
+
+
+
+/* ── 06. MURAL DE RECUERDOS ───────────────────────────────────────────────── */
+.mural {
+  padding: clamp(3.5rem, 8vw, 6rem) 0 clamp(4rem, 9vw, 7rem);
+  background: var(--marino-hondo);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(212, 175, 55, .10), transparent 70%);
+}
+.collage {
+  column-count: 4;
+  column-gap: clamp(.9rem, 1.8vw, 1.5rem);
+}
+.polaroid {
+  break-inside: avoid;
+  margin: 0 0 clamp(1rem, 2vw, 1.6rem);
+  padding: 11px 11px 44px;
+  background: var(--crema);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .38);
+  transform: rotate(var(--giro, 0deg));
+  transition: transform .45s cubic-bezier(.22, .61, .36, 1), box-shadow .45s ease;
+  cursor: zoom-in;
+}
+.polaroid img { width: 100%; height: auto; object-fit: cover; }
+.polaroid figcaption {
+  margin-top: .7rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: .8rem;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--marino-suave);
+}
+.polaroid:hover,
+.polaroid:focus-visible {
+  transform: rotate(0deg) scale(1.055) translateY(-8px);
+  box-shadow: 0 26px 52px rgba(0, 0, 0, .5);
+  position: relative;
+  z-index: 3;
+}
+/* La transición de entrada no debe pisar la inclinación de cada polaroid */
+.js .collage .reveal            { transform: translateY(26px) rotate(var(--giro, 0deg)); }
+.js .collage .reveal.is-visible { transform: rotate(var(--giro, 0deg)); }
+
+
+/* ── 07. PIE DE PÁGINA Y VISOR DE FOTOS ───────────────────────────────────── */
+.pie {
+  padding: 2.4rem 1.5rem;
+  text-align: center;
+  background: var(--marino-hondo);
+  border-top: 1px solid rgba(212, 175, 55, .28);
+  color: rgba(245, 241, 233, .8);
+}
+.pie__frase { font-family: var(--serif); font-style: italic; font-size: 1rem; }
+.pie__meta  { margin-top: .45rem; font-size: .76rem; letter-spacing: .1em; color: rgba(245, 241, 233, .45); }
+
+.visor {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  padding: clamp(1rem, 5vw, 3rem);
+  background: rgba(16, 26, 38, .93);
+  backdrop-filter: blur(6px);
+  animation: aparecer .25s ease forwards;
+}
+.visor[hidden] { display: none; }
+.visor__caja { margin: 0; max-width: min(92vw, 1000px); }
+.visor__caja img {
+  max-height: 78vh; width: auto; margin-inline: auto;
+  padding: 10px; background: var(--crema);
+  box-shadow: var(--sombra-alta);
+}
+.visor__caja figcaption {
+  margin-top: 1rem; text-align: center;
+  font-family: var(--serif); font-style: italic;
+  color: rgba(245, 241, 233, .85);
+}
+.visor__cerrar {
+  position: absolute; top: 1.1rem; right: 1.3rem;
+  width: 44px; height: 44px;
+  font-size: 2rem; line-height: 1;
+  background: transparent; border: none;
+  color: var(--beige);
+  opacity: .75; transition: opacity .2s ease;
+}
+.visor__cerrar:hover { opacity: 1; }
+
+
+/* ── 08. RESPONSIVE ───────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .collage { column-count: 3; }
+}
+
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .contenedor { width: min(100% - 2rem, var(--ancho-max)); }
+  .nav__link { padding: .3rem .5rem; font-size: .74rem; }
+  .collage { column-count: 2; }
+}
+
+/* Por debajo de 700 px el árbol no cabe sin encoger las caras hasta hacerlas
+   ilegibles, así que se deja desplazar en horizontal conservando la estructura. */
+@media (max-width: 700px) {
+  .arbol__pista { display: block; }
+  .arbol-envoltorio {
+    overflow-x: auto;
+    padding-bottom: .75rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .arbol { min-width: 620px; }
+}
+
+@media (max-width: 480px) {
+  .collage { column-count: 1; }
+  .hero__foto { padding: 6px; }
+}
+
+
+/* ── 09. ACCESIBILIDAD E IMPRESIÓN ────────────────────────────────────────── */
+:focus-visible { outline: 2px solid var(--oro); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+  .js .reveal { opacity: 1; transform: none; }
+  .js .nodo   { opacity: 1; transform: translate(-50%, -50%); }
+  .arbol .trazo { stroke-dashoffset: 0; }
+  .arbol .hoja  { transform: none; opacity: .95; }
+  .arbol .nudo  { transform: none; opacity: 1; }
+  .arbol__copa  { opacity: 1; }
+}
+
+@media print {
+  .nav, .visor, .arbol__pista { display: none !important; }
+  body { background: #fff; }
+  .mural, .pie { background: #fff; }
+  .seccion__cabecera--claro .seccion__titulo,
+  .seccion__cabecera--claro .seccion__sub { color: var(--marino); }
+  .arbol-envoltorio { overflow: visible; }
+  .js .reveal { opacity: 1 !important; transform: none !important; }
+}

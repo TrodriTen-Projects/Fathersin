@@ -1,0 +1,3 @@
+# Es una pagina familiar y privada: pedimos a los buscadores que no la indexen.
+User-agent: *
+Disallow: /

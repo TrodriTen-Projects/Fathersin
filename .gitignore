@@ -1,0 +1,25 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Compilacion / despliegue
+dist/
+node_modules/
+.wrangler/
+
+# Fotos originales sin optimizar (guardalas fuera del repositorio)
+originales/
+*.CR2
+*.NEF
+*.HEIC
+
+# Configuracion local de previsualizacion
+.claude/
+actualizar-fotos.*
+retratos-arbol.*

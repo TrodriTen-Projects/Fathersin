@@ -1,0 +1,79 @@
+# ==============================================================================
+#  Despliegue automatico en Cloudflare Pages
+#  ------------------------------------------------------------------------------
+#  Cada vez que subas codigo a la rama principal (main o master), esta accion
+#  empaqueta el sitio estatico y lo publica en tu proyecto de Cloudflare Pages.
+#
+#  SECRETOS NECESARIOS  (Settings > Secrets and variables > Actions > New secret)
+#    CLOUDFLARE_API_TOKEN    Token con permiso "Cloudflare Pages: Edit"
+#    CLOUDFLARE_ACCOUNT_ID   ID de cuenta (barra lateral del panel de Cloudflare)
+#    CLOUDFLARE_PROJECT_NAME Nombre exacto del proyecto en Cloudflare Pages
+#
+#  Los pasos detallados estan en el README.md de este repositorio.
+# ==============================================================================
+
+name: Desplegar en Cloudflare Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:        # permite lanzarlo a mano desde la pestana Actions
+
+# Si haces varios push seguidos, cancela los despliegues antiguos.
+concurrency:
+  group: cloudflare-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    name: Publicar sitio
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      # El sitio es HTML/CSS/JS puro: no hace falta compilar nada.
+      # Solo copiamos a "dist" los archivos que deben llegar al servidor.
+      - name: Preparar carpeta de publicacion
+        run: |
+          mkdir -p dist
+          cp index.html dist/
+          cp -r assets dist/
+          # Archivos opcionales de configuracion de Cloudflare Pages
+          for f in _headers _redirects robots.txt; do
+            [ -f "$f" ] && cp "$f" dist/
+          done
+          # El listado interno de fotos no necesita publicarse
+          rm -f dist/assets/images/LEEME.txt dist/assets/images/_RENOMBRADAS.txt
+          echo "Contenido que se va a publicar:"
+          find dist -type f | sort
+
+      - name: Publicar en Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          directory: dist
+          branch: ${{ github.ref_name }}
+          # Permite que GitHub muestre el enlace del despliegue en el commit/PR
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+# ------------------------------------------------------------------------------
+# ALTERNATIVA MODERNA
+# ------------------------------------------------------------------------------
+# Cloudflare ya no da mantenimiento a "pages-action" y recomienda "wrangler-action".
+# Si algun dia el paso de arriba deja de funcionar, sustituyelo por este:
+#
+#      - name: Publicar en Cloudflare Pages (wrangler)
+#        uses: cloudflare/wrangler-action@v3
+#        with:
+#          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+#          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+#          command: pages deploy dist --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME }} --branch=${{ github.ref_name }}
+# ------------------------------------------------------------------------------
