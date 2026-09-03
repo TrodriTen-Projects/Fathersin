@@ -2,12 +2,38 @@
 # https://developers.cloudflare.com/pages/configuration/headers/
 
 /*
+  # ── Politica de seguridad de contenido ───────────────────────────────────
+  # "default-src 'none'" niega todo por defecto y luego se abre solo lo justo.
+  # La pagina es estatica y no llama a ningun servidor externo, asi que puede
+  # ser asi de estricta. Si alguna vez alguien lograra colar HTML en la pagina,
+  # el navegador se negaria a ejecutar el script que metiera.
+  #
+  #   script-src 'self'          solo los .js de este dominio. No hay scripts
+  #                              en linea: el de los marcadores esta en
+  #                              assets/js/marcadores.js justo por esto.
+  #   style-src  ... 'unsafe-inline'
+  #                              hace falta porque el arbol y el mural usan
+  #                              atributos style="--x:50%; --giro:2deg" en
+  #                              cada retrato y cada polaroid. Es el unico
+  #                              hueco que queda, y no permite ejecutar codigo.
+  #   img-src 'self' data:       las fotos, mas los marcadores, que son SVG
+  #                              generados como data: URI.
+  #   font-src 'self'            las fuentes estan en assets/fonts/.
+  #   connect-src 'none'         la pagina no hace ninguna peticion de red.
+  #   frame-ancestors 'none'     nadie puede meter la pagina en un <iframe>.
+  #   base-uri / form-action / object-src 'none'
+  #                              cierran las vias clasicas de secuestro.
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'
+
+  # ── Cabeceras clasicas ───────────────────────────────────────────────────
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  X-Frame-Options: SAMEORIGIN
-  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  X-Frame-Options: DENY
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
 
-# Las fotos y los estilos no cambian de nombre: se pueden cachear un ano.
+# Las fotos, los estilos y las fuentes no cambian de nombre: se cachean un ano.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
